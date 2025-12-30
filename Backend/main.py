@@ -4,12 +4,33 @@ from fastapi.middleware.cors import CORSMiddleware
 import joblib
 from pathlib import Path
 import pandas as pd
+import os
 
 
 BASE_DIR = Path(__file__).resolve().parent
 
-model_path = BASE_DIR / "model" / "diabetes_pipeline.pkl"
+# Try multiple possible paths for the model file
+possible_paths = [
+    BASE_DIR / "model" / "diabetes_pipeline.pkl",  # Relative to main.py
+    Path("model/diabetes_pipeline.pkl"),  # Relative to current directory
+    Path("Backend/model/diabetes_pipeline.pkl"),  # From project root
+    Path(os.path.join(os.getcwd(), "model", "diabetes_pipeline.pkl")),  # From cwd
+    Path(os.path.join(os.getcwd(), "Backend", "model", "diabetes_pipeline.pkl")),  # From cwd/Backend
+]
 
+model_path = None
+for path in possible_paths:
+    if path.exists():
+        model_path = path
+        break
+
+if model_path is None:
+    raise FileNotFoundError(
+        f"Model file 'diabetes_pipeline.pkl' not found. "
+        f"Tried paths: {[str(p) for p in possible_paths]}. "
+        f"Current working directory: {os.getcwd()}. "
+        f"BASE_DIR: {BASE_DIR}"
+    )
 
 model = joblib.load(model_path)
 

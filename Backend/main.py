@@ -37,16 +37,16 @@ model = joblib.load(model_path)
 app = FastAPI(title="Diabetes Risk Prediction API")
 
 
-origins = [
-    "http://localhost:3000", 
-    "http://127.0.0.1:3000", 
-    "https://diabetes-risk-prediction-eight.vercel.app/"
+# origins = [
+#     "http://localhost:3000", 
+#     "http://127.0.0.1:3000", 
+#     "https://diabetes-risk-prediction-eight.vercel.app/"
    
-]
+# ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,       
+    allow_origins=["*"],     
     allow_credentials=True,
     allow_methods=["*"],            
     allow_headers=["*"],           
